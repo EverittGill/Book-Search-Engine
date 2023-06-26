@@ -1,6 +1,6 @@
 // this is the resolvers file and it is where we will create the functionality for each query type we define in typeDefs.js.
 
-// const { AuthenticationError } = require('apollo-server-express');
+const { AuthenticationError } = require('apollo-server-express');
 const { User } = require("../models");
 const { signToken } = require("../utils/auth");
 
@@ -10,11 +10,14 @@ const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
-    me: async (parent, { args }) => {
-      return User.findOne({ _id: args._id });
+    me: async (parent, args, context) => {
+      if (context.user) {
+        return User.findOne({ _id: context.user._id }).populate('thoughts');
+      }
+      throw new AuthenticationError('You need to be logged in!');
     },
   },
-  Mutations: {
+  Mutation: {
     createUser: async (parent, { username, email, password }) => {
       const user = await User.create({ username, email, password });
       const token = signToken(user);

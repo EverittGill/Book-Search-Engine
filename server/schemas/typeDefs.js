@@ -23,9 +23,6 @@ const typeDefs = gql`
     user: User
   }
 
-  type Query {
-    me: User
-  }
 
   input SaveBookInput {
     authors: [String]
@@ -36,12 +33,18 @@ const typeDefs = gql`
     link: String
   }
 
-  type Mutations {
+  type Query {
+    me: User
+  }
+
+  type Mutation {
     login(email: String!, password: String!): Auth
     createUser(username: String!, email: String!, password: String!): Auth
     saveBook(input: SaveBookInput): User
     removeBook(bookId: String!): User
   }
+
+
 `;
 
 module.exports = typeDefs;
